@@ -1,40 +1,41 @@
 ---
 name: git-flow
-description: Git/GitHub collaboration workflow for AI-assisted development. Use when the user asks to start work, pull/update, create or switch branches, commit, push, open or update a PR, check merge readiness, merge, verify deployment, or says Korean phrases like "작업 시작", "다 했어", "올려줘", "PR 올려줘", "반영해줘", or "머지해줘". Helps identify parallel-work risk, prepare understandable PRs, and avoid unsafe main/production changes.
+description: Git/GitHub 협업 흐름을 돕는 스킬. Use when the user asks to start work, pull/update, create or switch branches, commit, push, open or update a PR, check merge readiness, merge, verify deployment, or says Korean phrases like "작업 시작", "다 했어", "올려줘", "PR 올려줘", "반영해줘", or "머지해줘". 병렬 작업 리스크, PR 설명, merge readiness, PR/deployment URL 안내, unsafe main/production changes 방지를 돕는다.
 ---
 
 # Git Flow
 
-## Overview
+## 개요
 
-Use this skill to guide Git/GitHub collaboration across repositories. The goal is not code-quality review; it is to keep branch, commit, PR, merge, and deployment handoffs clear enough that non-expert users can collaborate safely with AI agents.
+이 스킬은 AI가 Git/GitHub 협업 절차를 안전하게 수행하도록 돕는다. 목적은 코드 품질 리뷰가 아니라, 브랜치, 커밋, push, PR, 머지, 배포 확인 같은 협업 경계가 누락되지 않게 하는 것이다.
 
-Prefer the repository's own rules over this generic workflow. Before acting, read relevant local guidance such as `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `README.md`, `.github/pull_request_template.md`, and docs under `docs/` when they exist.
+대상 저장소의 규칙을 항상 우선한다. 작업 전 `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `README.md`, `.github/pull_request_template.md`, `docs/` 아래 협업 문서가 있으면 먼저 읽는다.
 
-## Phase Detection
+## 단계 판단
 
-Infer the phase from the user's request.
+사용자 요청을 보고 현재 단계를 판단한다.
 
-- Start phase: "작업 시작", "작업할게", "만들거야", "수정할거야", "삭제할거야", "start work", "create branch", "pull latest".
-- PR phase: "다 했어", "올려줘", "커밋해줘", "push", "PR 올려줘", "open a PR".
-- Release phase: "반영해줘", "머지해줘", "merge", "배포 확인", "check deployment".
+- 작업 시작: `작업 시작`, `작업할게`, `만들거야`, `수정할거야`, `삭제할거야`, `start work`, `create branch`, `pull latest`.
+- PR 생성: `다 했어`, `올려줘`, `커밋해줘`, `push`, `PR 올려줘`, `open a PR`.
+- 반영 확인: `반영해줘`, `머지해줘`, `merge`, `배포 확인`, `check deployment`.
 
-At the start of the response, state the inferred phase in Korean. If the request spans multiple phases, run them in order only when safe.
+응답 첫 줄에 어떤 단계로 이해했는지 한국어로 밝힌다. 요청이 여러 단계를 포함하면 안전한 순서대로 진행한다.
 
-## Universal Rules
+## 공통 원칙
 
-- Do not work directly on protected integration or production branches such as `main`, `master`, `dev`, `develop`, or release branches unless the repo explicitly allows it.
-- Do not overwrite unrelated local changes. Stage only files that belong to the current task.
-- Do not automatically deploy or merge to production/main. Treat main/production release as human-approved unless the repo explicitly authorizes it.
-- If GitHub authentication, `gh`, or API access is unavailable, explain the limitation and provide the exact URL or command the user can run manually.
-- After creating or updating a PR, always show the PR URL. If PR creation fails, show the compare/PR creation URL and a ready-to-paste title/body.
-- After a merge or deployment check, always show the PR URL and any deployment, preview, or site URL that was checked or needs human checking.
-- Do not turn normal parallel branch work into a blocker. Classify merge risk and recommend coordination only when needed.
+- 보호 브랜치나 통합 브랜치(`main`, `master`, `dev`, `develop`, release branch 등)에서 직접 작업하지 않는다. 단, 저장소 규칙이 명시적으로 허용하면 그 규칙을 따른다.
+- 사용자나 다른 작업자의 무관한 변경을 되돌리거나 섞지 않는다. 현재 작업에 속한 파일만 stage한다.
+- `main`/production 배포는 자동으로 진행하지 않는다. 명시적 승인과 저장소 규칙이 있을 때만 안내하거나 진행한다.
+- GitHub 인증, `gh` CLI, GitHub 앱/API 접근 권한이 없으면 그 이유를 설명하고, 사용자가 직접 열 수 있는 URL이나 실행할 명령을 제공한다.
+- PR을 만들거나 업데이트하면 항상 PR URL을 보여준다.
+- PR 생성에 실패하면 compare/PR 생성 URL과 바로 붙여넣을 수 있는 PR 제목/본문을 보여준다.
+- 머지나 배포 확인 후에는 항상 PR URL과 확인한 배포/preview/site URL을 보여준다.
+- 브랜치를 나눠 하는 정상적인 병렬 작업을 차단 사유로 보지 않는다. 중요한 것은 파일 겹침 자체가 아니라 merge/의미 충돌 리스크다.
 
-## Start Phase
+## 작업 시작 단계
 
-1. Read repository guidance.
-2. Inspect Git state:
+1. 저장소의 작업 규칙을 읽는다.
+2. Git 상태를 확인한다.
 
 ```bash
 git status --short
@@ -43,25 +44,27 @@ git remote -v
 git fetch --all --prune
 ```
 
-3. Identify the base branch from repo guidance or common defaults: `dev`, `develop`, then `main`.
-4. If currently on an integration/production branch, create or switch to a task branch before editing.
-5. Pull or rebase from the selected base branch when safe and no unrelated local work would be disturbed.
-6. Look for parallel-work risk using available evidence:
+3. 기준 브랜치를 확인한다. 저장소 문서가 없으면 일반적으로 `dev`, `develop`, `main` 순서로 추정한다.
+4. 현재 브랜치가 통합/운영 브랜치라면 작업 브랜치를 만들거나 전환한다.
+5. 무관한 로컬 변경을 건드리지 않는 범위에서 기준 브랜치 최신 상태를 반영한다.
+6. 병렬 작업 리스크를 확인한다.
 
-- local branch name and diff
-- open PRs when GitHub access is available
-- changed files in related PRs
-- repo docs naming common/shared files
-- the user's described screen, feature, data contract, permission, or deployment scope
+확인 근거:
 
-Classify risk by merge/coordination impact, not by whether files overlap:
+- 현재 브랜치명과 local diff
+- GitHub 접근이 가능할 때 open PR 목록
+- 관련 PR의 변경 파일
+- 저장소 문서에서 지정한 공통 파일/공통 영역
+- 사용자가 말한 화면, 기능, 데이터 계약, 권한, 배포 범위
 
-- Normal parallel: proceed on a separate branch.
-- Coordination needed: proceed, but note likely PR order or scope split.
-- Semantic conflict risk: align on data contract, status logic, auth/permission, DB schema, or shared behavior before continuing.
-- Blocked: stop for human decision when production data, migrations, destructive changes, or protected release actions are involved.
+리스크는 파일 겹침 여부가 아니라 merge/조정 영향으로 분류한다.
 
-Output:
+- 정상 병렬: 별도 브랜치로 진행 가능.
+- 조정 필요: 진행 가능하지만 PR 순서, 작업 범위, 담당 영역 표시 필요.
+- 의미 충돌 위험: 데이터 계약, 상태값, 권한, DB schema, 공통 로직 기준을 먼저 맞춰야 함.
+- 차단: 운영 데이터 삭제, migration, destructive change, production/main 반영처럼 사람 결정이 필요한 상태.
+
+출력 형식:
 
 ```text
 GitHub 협업 단계: 작업 시작
@@ -87,12 +90,12 @@ GitHub 협업 단계: 작업 시작
 - <AI가 이어서 할 일 또는 사용자가 확인할 일>
 ```
 
-## PR Phase
+## PR 생성 단계
 
-1. Inspect current branch, diff, and status.
-2. Confirm the branch is not a protected integration/production branch.
-3. Review whether changes are within the requested scope.
-4. Run relevant repo checks. Prefer documented commands. Common examples:
+1. 현재 브랜치, diff, status를 확인한다.
+2. 현재 브랜치가 보호/통합/운영 브랜치가 아닌지 확인한다.
+3. 변경 내용이 요청 범위 안에 있는지 확인한다.
+4. 저장소 문서나 package script에 정의된 검증 명령을 우선 실행한다. 일반 예시는 아래와 같다.
 
 ```bash
 npm run lint
@@ -100,12 +103,12 @@ npm run typecheck
 npm run build
 ```
 
-5. For UI changes, open or run the app when practical and verify the changed screen.
-6. Commit only task-related files. If the final diff clearly contains unrelated task types, split commits by meaning; otherwise keep one clear commit.
-7. Push the branch.
-8. Create or update a PR to the repo's integration branch, usually `dev`, `develop`, or `main` depending on repo rules.
+5. UI 변경이면 가능한 경우 앱이나 preview를 열어 바뀐 화면을 확인한다.
+6. 현재 작업에 속한 파일만 커밋한다. 최종 diff가 명확히 다른 성격의 작업을 섞고 있으면 의미 단위로 커밋을 나눈다. 그렇지 않으면 명확한 하나의 커밋으로 충분하다.
+7. 원격 브랜치로 push한다.
+8. 저장소 규칙에 맞는 대상 브랜치로 PR을 생성하거나 업데이트한다.
 
-Use this PR body shape unless the repo template says otherwise:
+저장소 PR 템플릿이 없으면 아래 구조를 사용한다.
 
 ```md
 ## Summary
@@ -136,7 +139,7 @@ Use this PR body shape unless the repo template says otherwise:
 - 
 ```
 
-Output:
+출력 형식:
 
 ```text
 GitHub 협업 단계: PR 생성
@@ -153,7 +156,7 @@ GitHub 협업 단계: PR 생성
 - 리뷰어가 확인할 것:
 ```
 
-If PR creation cannot be completed:
+PR을 직접 생성하지 못하면 아래처럼 출력한다.
 
 ````text
 GitHub 협업 단계: PR 생성 준비
@@ -176,20 +179,21 @@ PR 본문:
 - 
 ````
 
-## Release Phase
+## 반영 확인 단계
 
-Do not assume release means production/main deployment. Determine the target from the user's words and repo rules. Default to checking merge readiness for the PR's target branch.
+`반영`이 곧 production/main 배포를 의미한다고 가정하지 않는다. 사용자 표현과 저장소 규칙을 기준으로 대상을 판단한다. 기본값은 PR 대상 브랜치에 대한 merge readiness 확인이다.
 
-1. Locate the PR URL or branch.
-2. Confirm target branch.
-3. Check merge conflicts.
-4. Check CI/status checks.
-5. Check unresolved review comments or open decisions when available.
-6. Confirm data, DB, permission, or deployment-impact reviews are complete when relevant.
-7. Merge only when the user asked for it, repo rules allow it, required checks pass, and the target is not production/main unless explicitly approved.
-8. After merge, check deployment, preview, or site URL when available.
+1. PR URL 또는 브랜치를 찾는다.
+2. 대상 브랜치를 확인한다.
+3. 충돌 여부를 확인한다.
+4. CI/status check 상태를 확인한다.
+5. 가능한 경우 unresolved review comment나 열린 결정을 확인한다.
+6. 데이터, DB, 권한, 배포 영향이 있으면 필요한 확인이 끝났는지 확인한다.
+7. 사용자가 명시적으로 요청했고 저장소 규칙이 허용하며 필수 조건이 통과했을 때만 merge한다.
+8. `main`/production 대상이면 명시적 승인 없이는 merge/deploy하지 않는다.
+9. merge 후 접근 가능한 배포, preview, site URL을 확인한다.
 
-Output:
+출력 형식:
 
 ```text
 GitHub 협업 단계: 반영 확인
@@ -207,8 +211,8 @@ GitHub 협업 단계: 반영 확인
 - 미확인/남은 리스크:
 ```
 
-## Commit Guidance
+## 커밋 기준
 
-Do not interrupt the user based only on elapsed time, file count, or diff size. Suggest an intermediate commit only when the user asks or when the work clearly crosses a boundary such as docs to code, UI to DB schema, refactor to behavior change, or one completed feature to a different feature.
+시간, 파일 수, diff 크기만으로 중간 커밋을 강요하지 않는다. 사용자가 요청했거나, 문서에서 코드로, UI에서 DB schema로, refactor에서 동작 변경으로 넘어가는 것처럼 작업 성격이 명확히 바뀔 때만 커밋 분리를 제안한다.
 
-At PR phase, inspect the final diff and choose one or more commits based on meaning.
+PR 생성 단계에서는 최종 diff를 보고 하나의 커밋으로 충분한지, 의미 단위로 나눌지 판단한다.
