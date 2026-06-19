@@ -1,15 +1,15 @@
 ---
-name: git-flow
-description: Claude Code에서 Git/GitHub 협업 흐름을 돕는 스킬. Use when the user asks to start work, pull/update, create or switch branches, commit, push, open or update a PR, check merge readiness, merge, verify deployment, or says Korean phrases like "작업 시작", "다 했어", "올려줘", "PR 올려줘", "반영해줘", or "머지해줘". 병렬 작업 리스크, PR 설명, merge readiness, PR/deployment URL 안내, unsafe main/production changes 방지를 돕는다.
+name: github-workflow
+description: Git/GitHub 협업 흐름을 돕는 스킬. Use when the user asks to start work, pull/update, create or switch branches, commit, push, open or update a PR, check merge readiness, merge, verify deployment, or says Korean phrases like "작업 시작", "다 했어", "올려줘", "PR 올려줘", "반영해줘", or "머지해줘". 병렬 작업 리스크, PR 설명, merge readiness, PR/deployment URL 안내, unsafe main/production changes 방지를 돕는다.
 ---
 
-# Git Flow
+# GitHub Workflow
 
 ## 개요
 
-이 스킬은 Claude Code에서 `/git-flow`로 호출하거나, 사용자의 요청이 Git/GitHub 협업 흐름에 해당할 때 사용한다. 목적은 코드 품질 리뷰가 아니라, 브랜치, 커밋, push, PR, 머지, 배포 확인 같은 협업 경계가 누락되지 않게 하는 것이다.
+이 스킬은 AI가 Git/GitHub 협업 절차를 안전하게 수행하도록 돕는다. 목적은 코드 품질 리뷰가 아니라, 브랜치, 커밋, push, PR, 머지, 배포 확인 같은 협업 경계가 누락되지 않게 하는 것이다.
 
-대상 저장소의 규칙을 항상 우선한다. 작업 전 `CLAUDE.md`, `AGENTS.md`, `CONTRIBUTING.md`, `README.md`, `.github/pull_request_template.md`, `docs/` 아래 협업 문서가 있으면 먼저 읽는다.
+대상 저장소의 규칙을 항상 우선한다. 작업 전 `AGENTS.md`, `CLAUDE.md`, `CONTRIBUTING.md`, `README.md`, `.github/pull_request_template.md`, `docs/` 아래 협업 문서가 있으면 먼저 읽는다.
 
 ## 단계 판단
 

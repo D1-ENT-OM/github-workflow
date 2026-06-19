@@ -1,11 +1,11 @@
 # github-workflow
 
-AI가 GitHub 협업 흐름을 안전하게 따르도록 돕는 `git-flow` 스킬 모음입니다.
+AI가 GitHub 협업 흐름을 안전하게 따르도록 돕는 `github-workflow` 스킬 모음입니다.
 
 이 저장소에는 같은 목적의 스킬이 두 가지 버전으로 들어 있습니다.
 
-- `codex/git-flow/`: Codex용 스킬. `$git-flow`로 호출합니다.
-- `claude/git-flow/`: Claude Code용 스킬. `/git-flow`로 호출합니다.
+- `codex/github-workflow/`: Codex용 스킬. `$github-workflow`로 호출합니다.
+- `claude/github-workflow/`: Claude Code용 스킬. `/github-workflow`로 호출합니다.
 
 ## 무엇을 돕는가
 
@@ -48,25 +48,25 @@ gh auth status
 작업 시작:
 
 ```text
-$git-flow
+$github-workflow
 작업 시작할게. 운영 목록 필터 수정할거야.
 ```
 
 PR 생성:
 
 ```text
-$git-flow
+$github-workflow
 다 했어. 커밋하고 PR 올려줘.
 ```
 
 반영 확인:
 
 ```text
-$git-flow
+$github-workflow
 PR 확인하고 반영해줘.
 ```
 
-Claude Code에서는 `$git-flow` 대신 `/git-flow`를 사용합니다.
+Claude Code에서는 `$github-workflow` 대신 `/github-workflow`를 사용합니다.
 
 ## 설치
 
@@ -74,14 +74,14 @@ Codex:
 
 ```bash
 mkdir -p ~/.codex/skills
-cp -R codex/git-flow ~/.codex/skills/git-flow
+cp -R codex/github-workflow ~/.codex/skills/github-workflow
 ```
 
 Claude Code:
 
 ```bash
 mkdir -p ~/.claude/skills
-cp -R claude/git-flow ~/.claude/skills/git-flow
+cp -R claude/github-workflow ~/.claude/skills/github-workflow
 ```
 
 ## 중요한 원칙
