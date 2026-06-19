@@ -7,6 +7,15 @@ AI가 GitHub 협업 흐름을 안전하게 따르도록 돕는 `github-workflow`
 - `codex/github-workflow/`: Codex용 스킬. `$github-workflow`로 호출합니다.
 - `claude/github-workflow/`: Claude Code용 스킬. `/github-workflow`로 호출합니다.
 
+## 스킬 이름
+
+스킬 이름은 저장소 이름과 동일하게 `github-workflow`로 통일합니다.
+
+- Codex: `$github-workflow`
+- Claude Code: `/github-workflow`
+
+예전 초안에서 사용했던 `git-flow` 이름은 사용하지 않습니다. Git 명령 자체보다 GitHub 기반 협업 흐름을 다루는 스킬이기 때문입니다.
+
 ## 무엇을 돕는가
 
 이 스킬은 코드 품질 리뷰용이 아닙니다. AI가 작업할 때 GitHub 협업 과정에서 자주 빠지는 단계를 챙기도록 돕습니다.
