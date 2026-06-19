@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Flow"
+  short_description: "GitHub 협업 절차와 PR 반영 안전 게이트"
+  default_prompt: "Use $git-flow when the user says 작업 시작, 올려줘, PR 올려줘, or 반영해줘 for GitHub collaboration."
